@@ -19,7 +19,8 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
-        
+    String[] Health = {"Healthy", "Damaged", "Dead"};
+        int hp = 0;
     /**
      * Create the game and initialise its internal map.
      */
@@ -27,8 +28,9 @@ public class Game
     {
         createRooms();
         parser = new Parser();
+        
     }
-
+   
     /**
      * Create all the rooms and link their exits together.
      */
@@ -110,7 +112,11 @@ public class Game
             case HELP:
                 printHelp();
                 break;
-
+                
+            case HEALTH:
+                System.out.println(Health[hp]);
+                break;
+                
             case GO:
                 goRoom(command);
                 break;
