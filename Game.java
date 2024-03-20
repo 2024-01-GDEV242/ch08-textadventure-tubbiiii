@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -61,7 +64,7 @@ public class Game
 
         currentRoom = outside;  // start game outside
     }
-
+    
     /**
      *  Main play routine.  Loops until end of play.
      */
@@ -92,7 +95,20 @@ public class Game
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
     }
-
+    
+    public ArrayList<inventory> inventory(String[] args)
+    {
+        ArrayList<String> inventory = new ArrayList<String>();
+        inventory.add("Key");
+        return(inventory);
+    
+    }
+    
+    public static void printInventory()
+    {
+        System.out.println(Arrays.toString(inventory));
+    }
+    
     /**
      * Given a command, process (that is: execute) the command.
      * @param command The command to be processed.
@@ -112,10 +128,16 @@ public class Game
             case HELP:
                 printHelp();
                 break;
-                
+            
             case HEALTH:
-                System.out.println(Health[hp]);
+                System.out.println("You are " + Health[hp]);
                 break;
+                
+            case DAMAGE:
+                System.out.println("You were hurt!");
+                hp += 1; 
+               break;
+            case INVENTORY:
                 
             case GO:
                 goRoom(command);
@@ -127,7 +149,11 @@ public class Game
         }
         return wantToQuit;
     }
-
+    public void damage()
+    {
+        System.out.println("You were hurt!");
+                hp += 1; 
+    }
     // implementations of user commands:
 
     /**
