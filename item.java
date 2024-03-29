@@ -22,5 +22,8 @@ public class item
     public int getWeight(){
         return weight;
     }
+    public String getName(){
+        return name;
+    }
     }
 

@@ -9,7 +9,7 @@ public class player
 {
     // instance variables - replace the example below with your own
     
-    private Inventory inventory;
+    public Inventory inventory;
 
     /**
      * Constructor for objects of class player
@@ -23,5 +23,8 @@ public class player
     }
      public void removeItemFromPlayer(item item) {
         inventory.removeItem(item);
+    }
+    public void displayPlayerInventory() {
+        inventory.displayInventory();
     }
 }

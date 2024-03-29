@@ -29,7 +29,9 @@ public class Inventory {
     public void addItem(item item) {
         if(weightLimit >= totalWeight){
             items.add(item);
-            System.out.println(item + " added to inventory.");
+            String itemName = Game.checkItem(item); // Access Game method
+             System.out.println("- " + itemName + " added to inventory.");
+        
         }
         if(weightLimit <= totalWeight){
             System.out.println(item + " is too heavy!.");
@@ -40,7 +42,6 @@ public class Inventory {
     public void removeItem(item item) {
         if (items.contains(item)) {
             items.remove(item);
-            System.out.println(item + " removed from inventory.");
         } else {
             System.out.println("Item not found in inventory.");
         }
@@ -50,14 +51,23 @@ public class Inventory {
     public boolean hasItem(item item) {
         return items.contains(item);
     }
-
+     public boolean commandMatchesItem(String command) {
+        for (item item : items) {
+            if (item.getName().equalsIgnoreCase(command)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     // Method to display inventory
     public void displayRoomInventory() {
         if (items.isEmpty()) {
             System.out.println("nothing!");
         } else {
             for (item item : items) {
-                System.out.println("a " + item.name);
+                String itemName = Game.checkItem(item); // Access Game method
+                System.out.println("- " + itemName);
             }
         }
     }
@@ -67,7 +77,8 @@ public class Inventory {
         } else {
             System.out.println("Inventory:");
             for (item item : items) {
-                System.out.println("- " + item.name);
+                String itemName = Game.checkItem(item); // Access Game method
+                System.out.println("- " + itemName);
             }
         }
     }

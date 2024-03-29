@@ -23,7 +23,7 @@ public class Game
     private player player;
     item floorSandwich, normalSandwich, soda, ironball, theaterkey, pencil, heavypencil;
     String[] Health = {"Healthy", "Damaged", "Dead"};
-    Room outside, theater, pub, lab, office, kitchen;
+    
     String roomName;
     int hp = 0;
     int playerRoomNum;
@@ -42,9 +42,9 @@ public class Game
      */
     public Game() 
     {
+        createItems();
         createRooms();
         createNPCs();
-        createItems();
         createPlayer();
         parser = new Parser();
         
@@ -105,7 +105,7 @@ public class Game
     public void createRooms()
     {
         
-         Room busStop, outside, theater, pub, lab, office;
+         Room busStop, outside, theater, pub, lab, office, kitchen;
         
         // create the rooms
         busStop = new Room("at the bus station","busStop", 0);
@@ -125,6 +125,9 @@ public class Game
         theater.setExit("west", outside);
 
         pub.setExit("east", outside);
+        pub.setExit("north", kitchen);
+        
+        kitchen.setExit("south", pub);
 
         lab.setExit("north", outside);
         lab.setExit("east", office);
@@ -133,6 +136,9 @@ public class Game
         office.setExit("machine", theater);
         
         // add items to rooms
+        addItemToRoom(pub , floorSandwich);
+        addItemToRoom(busStop , floorSandwich);
+        
         
         currentRoom = busStop;  // start game at the bus stop
         
@@ -144,9 +150,25 @@ public class Game
      * @param The room the player is in
      * @return the room name parameter as a string
      */
-    public static String checkRoom(Room room) {
+        public static String checkItem(item item) {
+        String itemName = item.getName();
+        return itemName;
+    }
+    public void addItemToRoom(Room room, item item) {
+        room.addItemToRoom(item);
+    }
+    /**
+     * The player will use items specified by the second word of the command
+     * @param The room the player is in
+     * @return the room name parameter as a string
+     */
+        public static String checkRoom(Room room) {
         String roomName = room.getName();
         return roomName;
+    }
+    public String getName(item item){
+        String itemName = item.getName();
+        return itemName;
     }
     /**
      *  Main play routine.  Loops until end of play.
@@ -199,10 +221,7 @@ public class Game
      */
         public void printInventory()
     {
-          System.out.println("Inventory:");
-        for (String item : inventory) {
-            System.out.println(item);
-        }
+         player.displayPlayerInventory();
     }
     /**
      * Given a command, process (that is: execute) the command.
@@ -251,20 +270,33 @@ public class Game
             case TAKE:
                 take(command);
                 break;
+            case DROP:
+                drop(command);
+                break;
         }
         return wantToQuit;
     }
-    private void take (Command command) {
-        if (!command.hasSecondWord()) {
-            System.out.println("Take what?");
-            return;
+     public void takeItem(String itemName) {
+        if (currentRoom.inventory.containsItem(itemName)) {
+            item item = currentRoom.inventory.findItemByName(itemName);
+            playerInventory.addItem(item);
+            roomInventory.removeItem(item);
+            System.out.println("You took the " + itemName + ".");
+        } else {
+            System.out.println("There's no " + itemName + " in the room.");
         }
-        String item = command.getSecondWord();
-        if ("floorsandwich".equalsIgnoreCase(item) && Room.roomContainsItem(floorSandwich)){
-                
-            }
+    }
+     public void drop(Command command) {
+         String item = command.getSecondWord();
+        
+        
+        if (hasItem(item)) {
+            currentRoom.addItemToRoom(item);
+            player.removeItem(item);
+        } else {
+            System.out.println("Item not found in player's inventory.");
         }
-    
+    }
         
         
     /**
@@ -326,9 +358,9 @@ public class Game
      */
     public void look()
     {
-        if("pub".equals(roomName) && !hasItem("Sandwich")){
-            System.out.println("You find a sandwich on the floor!\n" + "You pick it up and put it in your bag!");
-            inventory.add("Sandwich");
+        currentRoom.displayRoomInventory();
+        if (roomName == null){
+            System.out.println("Nothings there!");
         }
         else if ("pub".equals(roomName) && hasItem("Sandwich"))
         {

@@ -21,7 +21,7 @@ public class Room
     private String description;
     private ArrayList<item> items;
     public String name;
-    private Inventory inventory;
+    public Inventory inventory;
     private HashMap<String, Room> exits;        // stores exits of this room.
     item item;
     /**
@@ -38,7 +38,8 @@ public class Room
         this.inventory = new Inventory(inventoryWeightLimit);
         exits = new HashMap<>();
     }
-    public void addItemToRoom(item item) {
+    
+     public void addItemToRoom(item item) {
         inventory.addItem(item);
     }
      public void removeItemFromRoom(item item) {
