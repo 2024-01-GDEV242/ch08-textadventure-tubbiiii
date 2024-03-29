@@ -19,6 +19,7 @@ import java.util.Iterator;
 public class Room 
 {
     private String description;
+    public String name;
     private HashMap<String, Room> exits;        // stores exits of this room.
 
     /**
@@ -26,10 +27,12 @@ public class Room
      * no exits. "description" is something like "a kitchen" or
      * "an open court yard".
      * @param description The room's description.
+     * @param name The rooms name, used in referencing in other classes
      */
-    public Room(String description) 
+    public Room(String description, String name) 
     {
         this.description = description;
+        this.name = name;
         exits = new HashMap<>();
     }
 
@@ -62,7 +65,10 @@ public class Room
     {
         return "You are " + description + ".\n" + getExitString();
     }
-
+    public String getOfficeDescription()
+    {
+        return "You are " + description + ".\n" + "Exits: west";
+    }
     /**
      * Return a string describing the room's exits, for example
      * "Exits: north west".
@@ -87,6 +93,10 @@ public class Room
     public Room getExit(String direction) 
     {
         return exits.get(direction);
+    }
+    
+     public String getName() {
+        return name;
     }
 }
 
