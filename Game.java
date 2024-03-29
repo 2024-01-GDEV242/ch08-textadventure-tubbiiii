@@ -2,10 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- *  This class is the main class of the "World of Zuul" application. 
- *  "World of Zuul" is a very simple, text based adventure game.  Users 
- *  can walk around some scenery. That's all. It should really be extended 
- *  to make it more interesting!
+ *  This is the main class for my text adventure project, most features exist here.
  * 
  *  To play this game, create an instance of this class and call the "play"
  *  method.
@@ -14,27 +11,32 @@ import java.util.Arrays;
  *  rooms, creates the parser and starts the game.  It also evaluates and
  *  executes the commands that the parser returns.
  * 
- * @author  Michael Kölling and David J. Barnes
- * @version 2016.02.29
+ * @author  Chris Compierchio
+ * @version 2024 3/27/24
  */
 
 public class Game 
 {
     private Parser parser;
-    private NPCs guard;
-    private NPCs professor;
-    private NPCs machine;
+    private NPCs professor, machine, guard;
     private Room currentRoom;
+    private player player;
+    item floorSandwich, normalSandwich, soda, ironball, theaterkey, pencil, heavypencil;
     String[] Health = {"Healthy", "Damaged", "Dead"};
-    String[] playerRoom = {"outside", "theater", "pub", "lab", "office"};
-    Room outside, theater, pub, lab, office;
+    Room outside, theater, pub, lab, office, kitchen;
     String roomName;
     int hp = 0;
     int playerRoomNum;
     boolean  finished = false;
     boolean guardfed = false;
-    boolean dead = false;
     boolean transported = false;
+    /**
+     * Make the game run outside of blueJ
+     */
+     public static void main(String[] args) {
+        Game game = new Game();
+        game.play();
+    }
     /**
      * Create the game and initialise its internal map.
      */
@@ -42,10 +44,28 @@ public class Game
     {
         createRooms();
         createNPCs();
+        createItems();
+        createPlayer();
         parser = new Parser();
         
     }
-    
+    public void createPlayer()
+    {
+         player = new player(50);
+        }
+    public void createItems()
+    {
+         floorSandwich = new item(1, false, "Floor Sandwich");
+         normalSandwich = new item(3, true, "Normal Sandwich");
+         soda = new item(4, true, "Soda");
+         ironball = new item(30, false, "Iron ball");
+         theaterkey = new item(2, false, "Theater Key");
+         pencil = new item(1, false, "pencil");
+         heavypencil = new item(20, false, "oddly heavy pencil");
+        }
+    /**
+     * Create all the NPCs and give them dialogue
+     */
     public void createNPCs()
     {
          guard = new NPCs(
@@ -88,12 +108,13 @@ public class Game
          Room busStop, outside, theater, pub, lab, office;
         
         // create the rooms
-        busStop = new Room("at the bus station","busStop");
-        outside = new Room("outside the main entrance of the university", "outside");
-        theater = new Room("in a lecture theater", "theater");
-        pub = new Room("in the campus pub", "pub");
-        lab = new Room("in a computing lab", "lab");
-        office = new Room("in the computing admin office" , "office");
+        busStop = new Room("at the bus station","busStop", 0);
+        outside = new Room("outside the main entrance of the university", "outside", 100);
+        theater = new Room("in a lecture theater", "theater", 100);
+        pub = new Room("in the campus pub", "pub", 100);
+        lab = new Room("in a computing lab", "lab", 100);
+        office = new Room("in the computing admin office" , "office", 100);
+        kitchen = new Room("in the pub's kitchen" , "kitchen" , 100);
         
         // initialise room exits
         busStop.setExit("south", outside);
@@ -111,11 +132,18 @@ public class Game
         office.setExit("west", lab);
         office.setExit("machine", theater);
         
+        // add items to rooms
+        
         currentRoom = busStop;  // start game at the bus stop
         
     
         
     }
+    /**
+     * The player will use items specified by the second word of the command
+     * @param The room the player is in
+     * @return the room name parameter as a string
+     */
     public static String checkRoom(Room room) {
         String roomName = room.getName();
         return roomName;
@@ -166,7 +194,9 @@ public class Game
         
     
     }
-    
+    /**
+     * Prints the player's inventory
+     */
         public void printInventory()
     {
           System.out.println("Inventory:");
@@ -218,9 +248,30 @@ public class Game
             case LOOK:
                 look();
                 break;
+            case TAKE:
+                take(command);
+                break;
         }
         return wantToQuit;
     }
+    private void take (Command command) {
+        if (!command.hasSecondWord()) {
+            System.out.println("Take what?");
+            return;
+        }
+        String item = command.getSecondWord();
+        if ("floorsandwich".equalsIgnoreCase(item) && Room.roomContainsItem(floorSandwich)){
+                
+            }
+        }
+    
+        
+        
+    /**
+     * Check if player has item
+     * 
+     * @return true If the player has the item, false otherwise.
+     */
         private boolean hasItem(String item) {
         for (String inventoryItem : inventory) {
         //this is a for loop that tests if the player has an item in the inventory array list
@@ -230,6 +281,10 @@ public class Game
         }
         return false; // Item not found in inventory
     }
+    /**
+     * The player will use items specified by the second word of the command
+     * @param command The command to be processed.
+     */
     public void use(Command command) {
         if (!command.hasSecondWord()) {
             System.out.println("Use what?");
@@ -257,11 +312,18 @@ public class Game
             System.out.println("You can't use that here.");
         }
     }
-        public void damage()
+    /**
+     * The player takes damage
+     */    
+    public void damage()
         {
         System.out.println("You were hurt!");
                 hp += 1;       
     }
+    /**
+     * The player examines the current room
+     * 
+     */
     public void look()
     {
         if("pub".equals(roomName) && !hasItem("Sandwich")){
@@ -289,6 +351,7 @@ public class Game
      * Print out some help information.
      * Here we print some stupid, cryptic message and a list of the 
      * command words.
+     * also the room name for debug purposes
      */
     private void printHelp() 
     {
@@ -299,6 +362,9 @@ public class Game
         System.out.println("Your command words are:");
         parser.showCommands();
     }
+    /**
+     * causes the player to talk to npcs triggering thier "talkto" dialogue
+     */
     private void talkNPC(){
         if ("outside".equals(roomName) && !guardfed) {
             String guardtalkTo = guard.getTalkToDialogue();
@@ -378,3 +444,4 @@ public class Game
         }
     }
 }
+
