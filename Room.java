@@ -38,19 +38,42 @@ public class Room
         this.inventory = new Inventory(inventoryWeightLimit);
         exits = new HashMap<>();
     }
-    
+    /**
+     * Adds an item to a rooms inventory
+     * @param item
+     */
      public void addItemToRoom(item item) {
-        inventory.addItem(item);
+        inventory.addItemToRoom(item);
     }
+     /**
+     * Removes an item from a rooms inventory
+     * @param item
+     */
      public void removeItemFromRoom(item item) {
-        inventory.removeItem(item);
+        inventory.removeItemFromRoom(item);
     }
+    /**
+     * Displays the rooms inventory (used in the lookcommand)
+     * 
+     */
     public void displayRoomInventory() {
         System.out.println("You see...");
         inventory.displayRoomInventory();
         }
-        public boolean roomContainsItem(item item) {
+    /**
+     * Checks if a room contains an item
+     * @param itemname
+     * @return booleanhasitem
+     */
+        public boolean roomContainsItem(String itemName) {
         return inventory.hasItem(item);
+    }
+    /**finds an item by name
+     * @return item
+     */
+    public item findItemByName(){
+        findItemByName();
+        return item;
     }
      /**
      * Define an exit from this room.
@@ -111,6 +134,10 @@ public class Room
         return exits.get(direction);
     }
     
+    /**
+     * gets the name string for the room
+     * @return name
+     */
      public String getName() {
         return name;
     }
